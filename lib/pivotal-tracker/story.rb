@@ -131,7 +131,10 @@ module PivotalTracker
             # xml.jira_id "#{jira_id}"
             # xml.jira_url "#{jira_url}"
             xml.other_id "#{other_id}" if other_id
-            xml.integration_id "#{integration_id}" if integration_id
+            if integration_id
+              Rails.logger.info "## integration_id:#{integration_id}"
+              xml.integration_id "#{integration_id}"
+            end
             xml.created_at DateTime.parse(created_at.to_s).to_s if created_at
             xml.accepted_at DateTime.parse(accepted_at.to_s).to_s if accepted_at
             xml.deadline DateTime.parse(deadline.to_s).to_s if deadline
