@@ -39,11 +39,13 @@ module PivotalTracker
     element :labels, String
     element :jira_id, Integer
     element :jira_url, String
-    element :other_id, Integer
+    element :other_id, String
+    element :zendesk_id, Integer
+    element :zendesk_url, String
     element :integration_id, Integer
     element :deadline, DateTime # Only available for Release stories
 
-    has_many :attachments, Attachment, :tag => 'attachments'
+    has_many :attachments, Attachment, :tag => 'attachments', :xpath => '//attachments'
 
     def initialize(attributes={})
       if attributes[:owner]
@@ -65,7 +67,7 @@ module PivotalTracker
       response = Client.connection["/projects/#{project_id}/stories/#{id}"].put(self.to_xml, :content_type => 'application/xml')
       return Story.parse(response)
     end
-    
+
     def move(position, story)
       raise ArgumentError, "Can only move :before or :after" unless [:before, :after].include? position
       Story.parse(Client.connection["/projects/#{project_id}/stories/#{id}/moves?move\[move\]=#{position}&move\[target\]=#{story.id}"].post(''))
@@ -131,10 +133,7 @@ module PivotalTracker
             # xml.jira_id "#{jira_id}"
             # xml.jira_url "#{jira_url}"
             xml.other_id "#{other_id}" if other_id
-            if integration_id
-              Rails.logger.info "## integration_id:#{integration_id}"
-              xml.integration_id "#{integration_id}"
-            end
+            xml.integration_id "#{integration_id}" if integration_id
             xml.created_at DateTime.parse(created_at.to_s).to_s if created_at
             xml.accepted_at DateTime.parse(accepted_at.to_s).to_s if accepted_at
             xml.deadline DateTime.parse(deadline.to_s).to_s if deadline

@@ -136,7 +136,7 @@ describe PivotalTracker::Story do
 
     def story_for(attrs)
       story = @project.stories.new(attrs)
-      @story = Hash.from_xml(story.send(:to_xml))['story']
+      @story = Crack::XML.parse(story.send(:to_xml))['story']
     end
 
     describe "attributes that are not sent to the tracker" do
@@ -185,12 +185,25 @@ describe PivotalTracker::Story do
         story_for(:labels => "abc")["labels"].should == "abc"
       end
 
-      it "should include other_id" do
-        story_for(:other_id => 10)["other_id"].should == "10"
+      describe "should include other_id" do
+        it "when passed a string" do
+          story_for(:other_id => "aa10bb")["other_id"].should == "aa10bb"
+        end
+        it "when passed an integer" do
+          story_for(:other_id => 10)["other_id"].should == "10"
+        end
       end
 
       it "should include integration_id" do
         story_for(:integration_id => 1000)["integration_id"].should == '1000'
+      end
+
+      it "should not include integration_id if it doesn't exist" do
+        story_for(:other_id => 1000).keys.should_not include("integration_id")
+      end
+
+      it "should not include other_id if it doesn't exist" do
+        story_for(:project_id => 1000).keys.should_not include("other_id")
       end
 
       # the tracker returns 422 when this is included, even if it is not used
