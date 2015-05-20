@@ -1,8 +1,8 @@
 require 'cgi'
 require 'rest_client'
-require 'happymapper'
+require 'happymapper' # nokogiri-happymapper
 require 'nokogiri'
-
+require 'crack'
 
 require File.join(File.dirname(__FILE__), 'pivotal-tracker', 'validation')
 require File.join(File.dirname(__FILE__), 'pivotal-tracker', 'extensions')
@@ -16,6 +16,7 @@ require File.join(File.dirname(__FILE__), 'pivotal-tracker', 'membership')
 require File.join(File.dirname(__FILE__), 'pivotal-tracker', 'activity')
 require File.join(File.dirname(__FILE__), 'pivotal-tracker', 'iteration')
 require File.join(File.dirname(__FILE__), 'pivotal-tracker', 'note')
+require File.join(File.dirname(__FILE__), 'pivotal-tracker', 'version')
 
 module PivotalTracker
 
